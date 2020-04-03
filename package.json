@@ -1,0 +1,10 @@
+{
+  "type": "module",
+  "scripts": {
+    "start": "pm2 start index.js --no-daemon",
+    "start:watch": "yarn start --watch"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
