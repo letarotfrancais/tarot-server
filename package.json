@@ -5,6 +5,7 @@
     "start:watch": "yarn start --watch"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "uuid": "^7.0.3"
   }
 }
