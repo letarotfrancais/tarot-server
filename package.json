@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "express": "^4.17.1",
+    "tarot-core": "file:./../tarot-core",
     "uuid": "^7.0.3"
   }
 }
