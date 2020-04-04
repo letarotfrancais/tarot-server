@@ -7,8 +7,9 @@ const GAME_MIN_PLAYERS = 3
 const GAME_MAX_PLAYERS = 4
 
 export default class Game {
-  constructor() {
+  constructor(owner) {
     this.id = v4()
+    this.owner = owner
     this.players = []
     this.tarotGame
   }

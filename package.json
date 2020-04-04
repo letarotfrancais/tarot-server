@@ -2,9 +2,11 @@
   "type": "module",
   "scripts": {
     "start": "pm2 start index.js --no-daemon",
-    "start:watch": "yarn start --watch"
+    "start:watch": "yarn start --watch",
+    "start:safe": "node --experimental-modules --es-module-specifier-resolution=node --no-warnings index.js"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "tarot-core": "file:./../tarot-core",
     "uuid": "^7.0.3"
