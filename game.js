@@ -12,11 +12,13 @@ export default class Game {
     this.owner = owner
     this.players = []
     this.tarotGame
+    this.status = 'created'
+    this.addPlayer(owner)
   }
   addPlayer(player) {
     if (!this.players.includes(player) && this.players.length <= GAME_MAX_PLAYERS) {
       this.players.push(player)
-    } else throw new GameError('player already registered or max players reached')
+    } else throw new GameError('player already joined or max players reached')
   }
   start() {
     let { players } = this
@@ -28,13 +30,14 @@ export default class Game {
         players
       })
       this.tarotGame.start()
+      this.status = 'started'
+    } else {
+      throw new GameError('invalid number of players', players.length)
     }
   }
   exec(playerId, action, payload) {
     let player = this.tarotGame.state.players.findId(playerId)
     let tarotGamePayload = Object.assign({}, payload, { player })
-    console.log(tarotGamePayload);
-
     this.tarotGame.exec(action, tarotGamePayload)
   }
 }
