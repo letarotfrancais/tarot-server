@@ -1,4 +1,4 @@
-export default function guards(games) {
+export default function(games) {
   return {
     guardOwner: () => (req, res, next) => {
       let { user } = req.headers
