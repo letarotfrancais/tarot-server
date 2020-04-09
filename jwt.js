@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken'
-import ms from 'ms'
 
 function extractToken(req) {
   let authorizationHeader = req.headers['authorization']
@@ -17,7 +16,7 @@ function extractToken(req) {
 
 export default function(secret, expiresIn) {
   return {
-    verifyTokenInHeader: (req, res) => {
+    checkToken: (req, res) => {
       try {
         let token = extractToken(req)
         jwt.verify(token, secret, (err, authData) => {
@@ -31,13 +30,12 @@ export default function(secret, expiresIn) {
         res.sendStatus(403)
       }
     },
-    setTokenInCookie: (req, res, next) => {
-      jwt.sign({userId: req.user._id}, secret, { expiresIn }, (err, token) => {
+    sendToken: (req, res) => {
+      jwt.sign({ userId: req.user.email }, secret, { expiresIn }, (err, token) => {
         if(err){
           res.sendStatus(500)
         } else {
-          res.cookie('access_token', token, { expires: new Date(Date.now() + ms(expiresIn)) })
-          next()
+          res.send({ token })
         }
       })
     }

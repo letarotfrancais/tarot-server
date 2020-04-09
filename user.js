@@ -1,50 +1,31 @@
-import _ from 'lodash'
-import uuid from 'uuid'
-
-const { v4 } = uuid
-
 class UserModel {
-  constructor(profile) {
-    this.id = v4()
-    this.profiles = []
-    this.profiles.push(_.cloneDeep(profile))
+  constructor({email, password}) {
+    this.email = email
+    this.password = password
   }
-  matchesProfile({provider, id}) {
-    return _some(this.profiles, { provider, id})
-  }
-  getProfile({ id }) {
-    return this.profiles.find(profile => profile.id === id)
+  validatePassword(password) {
+    return this.password === password
   }
 }
 
 class User {
   collection = []
-  findById(id) {
+  find(email) {
     return new Promise((resolve, reject) => {
-      let user = _.find(this.collection, { id })
+      let user = this.collection.find(u => u.email === email)
       if (user) {
         resolve(user)
       } else {
-        reject(new UserError(`could not find user of id ${JSON.stringify(id)}`))
+        reject(new UserError(`could not find user identified by email ${JSON.stringify(email)}`))
       }
     })
   }
-  findByProfile(profile) {
-    return new Promise((resolve, reject) => {
-      let user = this.collection.find(user => user.matchesProfile(profile))
-      if (user) {
-        resolve(user)
-      } else {
-        reject(new UserError(`could not find user matching profile ${JSON.stringify(profile)}`))
-      }
-    })
-  }
-  findOrCreateByProfile(profile) {
+  findOrCreate(data) {
     return new Promise(async (resolve, reject) => {
       try {
-        resolve(await this.findByProfile(profile))
+        resolve(await this.find(data.email))
       } catch (error) {
-        let user = new UserModel(profile)
+        let user = new UserModel(data)
         this.collection.push(user)
         resolve(user)
       }
