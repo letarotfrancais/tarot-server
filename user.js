@@ -1,7 +1,17 @@
+import uuid from 'uuid'
+
+const { v4: uuidv4 } = uuid
+
 class UserModel {
-  constructor({email, password}) {
-    this.email = email
-    this.password = password
+  uniqueProperties = ['uuid', 'email']
+  constructor(data) {
+    this.uuid = uuidv4()
+    Object.assign(this, data)
+  }
+  is(data) {
+    return Object.keys(data).reduce((prev, property) => {
+      return prev || (this.hasOwnProperty(property) && this.uniqueProperties.includes(property) && data[property] === this[property])
+    }, false)
   }
   validatePassword(password) {
     return this.password === password
@@ -10,20 +20,20 @@ class UserModel {
 
 class User {
   collection = []
-  find(email) {
+  find(data) {
     return new Promise((resolve, reject) => {
-      let user = this.collection.find(u => u.email === email)
+      let user = this.collection.find(u => u.is(data))
       if (user) {
         resolve(user)
       } else {
-        reject(new UserError(`could not find user identified by email ${JSON.stringify(email)}`))
+        reject(new UserError(`could not find user identified by data ${JSON.stringify(data)}`))
       }
     })
   }
-  findOrCreate(data) {
+  create(data) {
     return new Promise(async (resolve, reject) => {
       try {
-        resolve(await this.find(data.email))
+        reject(await this.find(data))
       } catch (error) {
         let user = new UserModel(data)
         this.collection.push(user)

@@ -1,11 +1,11 @@
 export default function(games) {
   return {
     guardOwner: () => (req, res, next) => {
-      let { user } = req.headers
+      let { user } = req
       let { gameId } = req.params
       let game = games.find(g => g.id === gameId)
 
-      if (user !== game.owner) {
+      if (user.uuid !== game.owner) {
         res.status(403).send('Check game ownership')
       } else {
         next()
@@ -13,11 +13,11 @@ export default function(games) {
     },
 
     guardMember: () => (req, res, next) => {
-      let { user } = req.headers
+      let { user } = req
       let { gameId } = req.params
       let game = games.find(g => g.id === gameId)
 
-      if (!game.players.includes(user)) {
+      if (!game.players.includes(user.uuid)) {
         res.status(403).send('Check game membership')
       } else {
         next()

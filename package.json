@@ -11,6 +11,7 @@
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "ms": "^2.1.2",
-    "tarot-core": "file:./../tarot-core"
+    "tarot-core": "file:./../tarot-core",
+    "uuid": "^7.0.3"
   }
 }

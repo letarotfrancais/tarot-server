@@ -3,7 +3,7 @@ import express from 'express'
 import cors from 'cors'
 import User from './user.js'
 import guards from './guards.js'
-import jwt from './jwt.js'
+import session from './session.js'
 import Game from './game.js'
 
 const {
@@ -16,21 +16,22 @@ const {
 const app = express()
 const games = []
 const { guardMember, guardOwner, guardStatus } = guards(games)
-const { checkToken, sendToken } = jwt(JWT_SECRET, JWT_EXPIRE)
+const { checkSession, sendSession } = session(JWT_SECRET, JWT_EXPIRE)
 
 app.use(express.json())
 app.use(cors())
 
-User.findOrCreate({ email: 'mr.meuble@gmail.com', password: 'totocaca' })
+User.create({ displayName: 'a', email: 'a', password: 'a' })
+User.create({ displayName: 'b', email: 'b', password: 'b' })
+User.create({ displayName: 'c', email: 'c', password: 'c' })
 
 app.post('/login', async (req, res, next) => {
     let { email, password } = req.body
     try {
-      let user = await User.find(email)
+      let user = await User.find({ email })
       if (user.validatePassword(password)) {
         req.user = user
         next()
-
       } else {
         throw Error('invalid password')
       }
@@ -38,22 +39,22 @@ app.post('/login', async (req, res, next) => {
       res.sendStatus(403)
     }
   },
-  sendToken
+  sendSession
 )
 
-app.get('/games', checkToken, (req, res) => {
+app.get('/games', checkSession, (req, res) => {
   res.send(games)
 })
 
-app.post('/games', checkToken, (req, res) => {
-  let { user } = req.headers
-  let game = new Game(user)
+app.post('/games', checkSession, (req, res) => {
+  let { user } = req
+  let game = new Game(user.uuid)
 
   games.push(game)
   res.send(game)
 })
 
-app.get('/games/:gameId', checkToken, (req, res) => {
+app.get('/games/:gameId', checkSession, (req, res) => {
   let { gameId } = req.params
   let game = games.find(g => g.id === gameId)
 
@@ -64,7 +65,7 @@ app.get('/games/:gameId', checkToken, (req, res) => {
   }
 })
 
-app.delete('/games/:gameId', checkToken, guardOwner(), (req, res) => {
+app.delete('/games/:gameId', checkSession, guardOwner(), (req, res) => {
   let { gameId } = req.params
   let game = games.find(g => g.id === gameId)
 
@@ -72,20 +73,20 @@ app.delete('/games/:gameId', checkToken, guardOwner(), (req, res) => {
   res.send(`Deleted game ${gameId}`)
 })
 
-app.get('/games/:gameId/join', guardStatus('created'), (req, res) => {
-  let { user } = req.headers
+app.get('/games/:gameId/join',checkSession, guardStatus('created'), (req, res) => {
+  let { user } = req
   let { gameId } = req.params
   let game = games.find(g => g.id === gameId)
 
   try {
-    game.addPlayer(user)
+    game.addPlayer(user.uuid)
     res.send(game)
   } catch (e) {
     res.status(403).send('Could not join game')
   }
 })
 
-app.get('/games/:gameId/start', guardOwner(), guardStatus('created'), (req, res) => {
+app.get('/games/:gameId/start', checkSession, guardOwner(), guardStatus('created'), (req, res) => {
   let { gameId } = req.params
   let game = games.find(g => g.id === gameId)
 
@@ -97,14 +98,14 @@ app.get('/games/:gameId/start', guardOwner(), guardStatus('created'), (req, res)
   }
 })
 
-app.post('/games/:gameId/action', checkToken, guardMember(), (req, res) => {
-  let { user } = req.headers
+app.post('/games/:gameId/action', checkSession, guardMember(), (req, res) => {
+  let { user } = req
   let { action, payload } = req.body
   let { gameId } = req.params
   let game = games.find(g => g.id === gameId)
 
   try {
-    game.exec(user, action, payload)
+    game.exec(user.uuid, action, payload)
     res.send(game)
   } catch (e) {
     res.status(403).send('Could not execute action')
