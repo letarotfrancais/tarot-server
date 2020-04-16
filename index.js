@@ -21,9 +21,9 @@ const { checkSession, sendSession } = session(JWT_SECRET, JWT_EXPIRE)
 app.use(express.json())
 app.use(cors())
 
-User.create({ displayName: 'a', email: 'a', password: 'a' })
-User.create({ displayName: 'b', email: 'b', password: 'b' })
-User.create({ displayName: 'c', email: 'c', password: 'c' })
+User.create({ displayName: 'Arnold', email: 'a', password: 'a' })
+User.create({ displayName: 'Bernard', email: 'b', password: 'b' })
+User.create({ displayName: 'Catherine', email: 'c', password: 'c' })
 
 app.post('/login', async (req, res, next) => {
     let { email, password } = req.body
@@ -48,7 +48,8 @@ app.get('/games', checkSession, (req, res) => {
 
 app.post('/games', checkSession, (req, res) => {
   let { user } = req
-  let game = new Game(user.uuid)
+  let { uuid, displayName } = user
+  let game = new Game({ displayName, uuid})
 
   games.push(game)
   res.send(game)
@@ -75,11 +76,12 @@ app.delete('/games/:gameId', checkSession, guardOwner(), (req, res) => {
 
 app.get('/games/:gameId/join',checkSession, guardStatus('created'), (req, res) => {
   let { user } = req
+  let { uuid, displayName } = user
   let { gameId } = req.params
   let game = games.find(g => g.id === gameId)
 
   try {
-    game.addPlayer(user.uuid)
+    game.addPlayer({ displayName, uuid })
     res.send(game)
   } catch (e) {
     res.status(403).send('Could not join game')

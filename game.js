@@ -16,7 +16,7 @@ export default class Game {
     this.addPlayer(owner)
   }
   addPlayer(player) {
-    if (!this.players.includes(player) && this.players.length <= GAME_MAX_PLAYERS) {
+    if (!this.players.some(p => p.uuid === player.uuid) && this.players.length <= GAME_MAX_PLAYERS) {
       this.players.push(player)
     } else throw new GameError('player already joined or max players reached')
   }
@@ -27,7 +27,7 @@ export default class Game {
         handDealSize: 3,
         dogDealSize: 1,
         dogMaxSize: 6,
-        players
+        players: this.players.map(p => p.uuid)
       })
       this.tarotGame.start()
       this.status = 'started'

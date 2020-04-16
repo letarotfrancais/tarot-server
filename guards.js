@@ -5,7 +5,7 @@ export default function(games) {
       let { gameId } = req.params
       let game = games.find(g => g.id === gameId)
 
-      if (user.uuid !== game.owner) {
+      if (user.uuid !== game.owner.uuid) {
         res.status(403).send('Check game ownership')
       } else {
         next()
@@ -17,7 +17,7 @@ export default function(games) {
       let { gameId } = req.params
       let game = games.find(g => g.id === gameId)
 
-      if (!game.players.includes(user.uuid)) {
+      if (!game.players.some(p => p.uuid === user.uuid)) {
         res.status(403).send('Check game membership')
       } else {
         next()
