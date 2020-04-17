@@ -1,5 +1,7 @@
 import jwt from 'jsonwebtoken'
-import User from './user'
+import database from './database.js'
+
+const { user: User } = database.sequelize.models
 
 function extractToken(req) {
   let authorizationHeader = req.headers['authorization']
@@ -17,19 +19,16 @@ function extractToken(req) {
 
 export default function(secret, expiresIn) {
   return {
-    checkSession: (req, res, next) => {
+    checkSession: async (req, res, next) => {
       try {
         let token = extractToken(req)
-        jwt.verify(token, secret, async (err, { uuid }) => {
-          if(err) {
-            throw new Error(err)
-          } else {
-            let user = await User.find({ uuid })
-            req.user = user
-            next()
-          }
-        })
+        let { uuid } = jwt.verify(token, secret)
+        let user = await User.findOne({ where: { uuid } }) // TODO might be cached with the session
+        req.user = user
+        next()
       } catch (error) {
+        console.log(error);
+
         res.sendStatus(403)
       }
     },

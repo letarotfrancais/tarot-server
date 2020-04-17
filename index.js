@@ -1,10 +1,10 @@
 import dotenv from 'dotenv'
 import express from 'express'
 import cors from 'cors'
-import User from './user.js'
 import guards from './guards.js'
 import session from './session.js'
 import Game from './game.js'
+import database from './database.js'
 
 const {
   APP_HOST,
@@ -17,19 +17,27 @@ const app = express()
 const games = []
 const { guardMember, guardOwner, guardStatus } = guards(games)
 const { checkSession, sendSession } = session(JWT_SECRET, JWT_EXPIRE)
+const { user: User } = database.sequelize.models
 
 app.use(express.json())
 app.use(cors())
 
-User.create({ displayName: 'Arnold', email: 'a', password: 'a' })
-User.create({ displayName: 'Bernard', email: 'b', password: 'b' })
-User.create({ displayName: 'Catherine', email: 'c', password: 'c' })
+async function initDatabase() {
+  try {
+    await database.sequelize.sync()
+    await User.findOrCreate({ where: { email: 'a' }, defaults: { displayName: 'Arnold', password: 'a' } })
+    await User.findOrCreate({ where: { email: 'b' }, defaults: { displayName: 'Bernard', password: 'b' } })
+    await User.findOrCreate({ where: { email: 'c' }, defaults: { displayName: 'Catherine', password: 'c' } })
+  } catch (e) {
+    console.log('SEQUELIZE ERROR', e);
+  }
+}
 
 app.post('/login', async (req, res, next) => {
     let { email, password } = req.body
     try {
-      let user = await User.find({ email })
-      if (user.validatePassword(password)) {
+      let user = await User.findOne({ where: { email } })
+      if (user.password === password) {
         req.user = user
         next()
       } else {
@@ -114,4 +122,6 @@ app.post('/games/:gameId/action', checkSession, guardMember(), (req, res) => {
   }
 })
 
+initDatabase()
 app.listen(APP_PORT, APP_HOST, () => console.log(`Server listening at http://localhost:${APP_PORT}`))
+
