@@ -2,7 +2,7 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.106.0/containers/typescript-node-12
 {
 	"name": "Node.js 13 & TypeScript",
-	"dockerFile": "Dockerfile",
+	"dockerFile": "../Dockerfile.dev",
 
 	// Set *default* container specific settings.json values on container create.
 	"settings": {

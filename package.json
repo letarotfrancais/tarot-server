@@ -1,9 +1,7 @@
 {
   "type": "module",
   "scripts": {
-    "start": "pm2 start index.js --no-daemon",
-    "start:watch": "yarn start --watch",
-    "start:safe": "node --experimental-modules --es-module-specifier-resolution=node --no-warnings index.js"
+    "start": "node --experimental-modules --es-module-specifier-resolution=node --no-warnings index.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -12,7 +10,7 @@
     "jsonwebtoken": "^8.5.1",
     "ms": "^2.1.2",
     "sequelize": "^5.21.6",
-    "tarot-core": "file:./../tarot-core",
+    "tarot-core": "amessinger/tarot-core#master",
     "uuid": "^7.0.3"
   },
   "devDependencies": {
