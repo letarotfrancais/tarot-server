@@ -6,10 +6,12 @@ cd ../tarot-server && yarn link "tarot-core"
 yarn start
 
 ## Build production docker image
-docker build -f Dockerfile.prod -t tarot-server:master --build-arg SSH_PRIVATE_KEY="$(cat ~/.ssh/id_rsa)" --force-rm .
+DOCKER_BUILDKIT=1 docker build --ssh default -t tarot-server:master .
 
-## Remove intermediate containers (should be unnecessary since --force-rm is used)
-docker rmi -f $(docker images -q --filter label=stage=build)
-
-## Get interactive shell
-docker run -p 49160:8080 -d tarot-server:master
+## Serve app
+docker run -p 49160:80 \
+  -e JWT_SECRET=somesecretkey \
+  -e DB_HOST=dbhost \
+  -e DB_DATABASE=dbname \
+  -e DB_PASSWORD=dbpassword \
+  tarot-server:master

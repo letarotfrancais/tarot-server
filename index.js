@@ -6,12 +6,14 @@ import session from './session.js'
 import Game from './game.js'
 import database from './database.js'
 
+dotenv.config()
+
 const {
   APP_HOST,
   APP_PORT,
   JWT_SECRET,
   JWT_EXPIRE,
-} = dotenv.config().parsed
+} = process.env
 
 const app = express()
 const games = []
@@ -123,5 +125,5 @@ app.post('/games/:gameId/action', checkSession, guardMember(), (req, res) => {
 })
 
 initDatabase()
-app.listen(APP_PORT, APP_HOST, () => console.log(`Server listening at http://localhost:${APP_PORT}`))
+app.listen(APP_PORT, APP_HOST, () => console.log(`Server listening at http://${APP_HOST}:${APP_PORT}`))
 

@@ -14,7 +14,7 @@ export default function(sequelize) {
         autoIncrement: true,
       },
       uuid: {
-        type: DataTypes.UUIDV4,
+        type: DataTypes.UUID,
         allowNull: false,
         unique: true,
         defaultValue: uuidv4

@@ -1,30 +1,28 @@
-// For format details, see https://aka.ms/vscode-remote/devcontainer.json or this file's README at:
-// https://github.com/microsoft/vscode-dev-containers/tree/v0.106.0/containers/typescript-node-12
+// For format details, see https://aka.ms/vscode-remote/devcontainer.json
 {
-	"name": "Node.js 13 & TypeScript",
-	"dockerFile": "../Dockerfile.dev",
+	"name": "Alpine with Nodejs and Yarn",
+	"dockerFile": "Dockerfile",
 
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
-		"terminal.integrated.shell.linux": "/bin/zsh"
+		"terminal.integrated.shell.linux": "/bin/ash"
 	},
 
 	// Add the IDs of extensions you want installed when the container is created.
-	"extensions": [
-		"dbaeumer.vscode-eslint",
-		"ms-vscode.vscode-typescript-tslint-plugin"
-	],
+	// Note that some extensions may not work in Alpine Linux. See https://aka.ms/vscode-remote/linux.
+	"extensions": [],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [8080],
 
+	// "initializeCommand": ["yarn"]
+
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": ""
+	// "postCreateCommand": "uname -a",
+
+	// Uncomment when using a ptrace-based debugger like C++, Go, and Rust
+	// "runArgs": [ "--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined" ],
 
 	// Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
-	// "remoteUser": "node"
-
-	"mounts": [
-    "source=${localWorkspaceFolder}/../tarot-core,target=/workspaces/tarot-core,type=bind,consistency=cached"
-	]
+	// "remoteUser": "vscode"
 }
