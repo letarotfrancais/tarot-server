@@ -35,6 +35,10 @@ async function initDatabase() {
   }
 }
 
+app.get('/', (req, res) => {
+  res.send('OK')
+})
+
 app.post('/login', async (req, res, next) => {
     let { email, password } = req.body
     try {
