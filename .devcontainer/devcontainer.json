@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/vscode-remote/devcontainer.json
 {
 	"name": "Alpine with Nodejs and Yarn",
-	"dockerFile": "Dockerfile",
+	"dockerFile": "../Dockerfile",
 
 	// Set *default* container specific settings.json values on container create.
 	"settings": {

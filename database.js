@@ -5,7 +5,7 @@ import User from './models/user.js'
 dotenv.config()
 
 const {
-  MODE,
+  NODE_ENV,
   DB_HOST,
   DB_PORT,
   DB_DATABASE,
@@ -32,6 +32,15 @@ const configs = {
   }
 }
 
+function getDbConfig(env) {
+  let config = configs[env]
+  if (config) {
+    return config
+  } else {
+    throw new Error(`No database config found for env ${env}`)
+  }
+}
+
 function sequelizeFactory(config) {
   if (!config) {
     throw new Error('you must provide a config for the ORM to be initialized')
@@ -40,7 +49,7 @@ function sequelizeFactory(config) {
   return new Sequelize(...args)
 }
 
-const sequelize = sequelizeFactory(configs[MODE])
+const sequelize = sequelizeFactory(getDbConfig(NODE_ENV))
 
 const modelsFactories = [User]
 

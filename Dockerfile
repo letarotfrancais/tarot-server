@@ -30,7 +30,7 @@ WORKDIR /root/
 COPY --from=build /root/tmp .
 COPY . .
 
-ENV MODE prod
+ENV NODE_ENV prod
 ENV APP_PORT=80 APP_HOST=0.0.0.0
 ENV JWT_EXPIRE=1w
 ENV DB_USERNAME=postgres

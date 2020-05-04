@@ -1,4 +1,4 @@
 FROM alpine
 
 RUN apk update \
-    && apk add --no-cache nodejs yarn
+    && apk add --no-cache git openssh-client nodejs yarn
