@@ -1,7 +1,11 @@
 // For format details, see https://aka.ms/vscode-remote/devcontainer.json
 {
 	"name": "Alpine with Nodejs and Yarn",
-	"dockerFile": "../Dockerfile",
+	"dockerFile": "Dockerfile",
+
+	"mounts": [
+		"source=${localWorkspaceFolder}/../tarot-core,target=/workspaces/tarot-core,type=bind,consistency=cached"
+	],
 
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
@@ -15,10 +19,8 @@
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [8080],
 
-	// "initializeCommand": ["yarn"]
-
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "uname -a",
+	"postCreateCommand": "yarn && cd node_modules/tarot-core && yarn && tsc",
 
 	// Uncomment when using a ptrace-based debugger like C++, Go, and Rust
 	// "runArgs": [ "--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined" ],
