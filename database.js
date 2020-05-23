@@ -5,7 +5,6 @@ import User from './models/user.js'
 dotenv.config()
 
 const {
-  NODE_ENV,
   DB_HOST,
   DB_PORT,
   DB_DATABASE,
@@ -13,31 +12,14 @@ const {
   DB_PASSWORD
 } = process.env
 
-const configs = {
-  dev: {
-    database: 'database',
-    username: null,
-    password: null,
-    options: { dialect: 'sqlite' }
-  },
-  prod: {
-    database: DB_DATABASE,
-    username: DB_USERNAME,
-    password: DB_PASSWORD,
-    options: {
-      dialect: 'postgres',
-      host: DB_HOST,
-      port: DB_PORT
-    }
-  }
-}
-
-function getDbConfig(env) {
-  let config = configs[env]
-  if (config) {
-    return config
-  } else {
-    throw new Error(`No database config found for env ${env}`)
+const config = {
+  database: DB_DATABASE,
+  username: DB_USERNAME,
+  password: DB_PASSWORD,
+  options: {
+    dialect: 'postgres',
+    host: DB_HOST,
+    port: DB_PORT
   }
 }
 
@@ -49,7 +31,7 @@ function sequelizeFactory(config) {
   return new Sequelize(...args)
 }
 
-const sequelize = sequelizeFactory(getDbConfig(NODE_ENV))
+const sequelize = sequelizeFactory(config)
 
 const modelsFactories = [User]
 

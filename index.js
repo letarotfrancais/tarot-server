@@ -24,19 +24,6 @@ const { user: User } = database.sequelize.models
 app.use(express.json())
 app.use(cors())
 
-async function initDatabase() {
-  try {
-    await database.sequelize.sync()
-    if (process.env.NODE_ENV === 'dev') {
-      await User.findOrCreate({ where: { email: 'a' }, defaults: { displayName: 'Arnold', password: 'a' } })
-      await User.findOrCreate({ where: { email: 'b' }, defaults: { displayName: 'Bernard', password: 'b' } })
-      await User.findOrCreate({ where: { email: 'c' }, defaults: { displayName: 'Catherine', password: 'c' } })
-    }
-  } catch (e) {
-    console.log('SEQUELIZE ERROR', e);
-  }
-}
-
 app.get('/', (req, res) => {
   res.send('OK')
 })
@@ -130,6 +117,5 @@ app.post('/games/:gameId/action', checkSession, guardMember(), (req, res) => {
   }
 })
 
-initDatabase()
 app.listen(APP_PORT, APP_HOST, () => console.log(`Server listening at http://${APP_HOST}:${APP_PORT}`))
 
